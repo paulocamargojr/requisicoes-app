@@ -1,0 +1,57 @@
+<div class="container">
+    <div class="row">
+        <div class="col-12 col-md-6 col-lg-15 mx-auto">
+            <div class="card my-5 p-4">
+                <div class="card-body text-center">
+                    <h1 class="card-title" style="color: rgba(0, 119, 255, 0.904);">Sistema de requisições</h1>
+                    <form action="" class="col-md-8 mx-auto" [formGroup]="form" (ngSubmit)="login()">
+                        <div class="form-group">
+                            <label for="email" class="form-label fs-5">Email</label>
+                            <input formControlName="email" type="email" class="form-control"
+                                placeholder="Digite seu endereço de email">
+                            <div class="form-group mt-5">
+                                <label for="password" class="form-label fs-5">Senha</label>
+                                <input formControlName="password" type="password" class="form-control"
+                                    placeholder="Digite sua senha">
+                            </div>
+                            <a role="button" class="text-primary text-decoration-none"
+                                (click)="abrirModalRecuperacao(content)">Esqueceu a senha?</a>
+                            <div class="d-grid mx-4 gap-2 mt-3">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="pi pi-sign-in me-1 fs-5"> Login</i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Recuperação de conta</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('fechar')"></button>
+    </div>
+    <form [formGroup]="formRecuperacao" (ngSubmit)="modal.close('enviar')">
+        <div class="modal-body">
+
+            <div class="alert alert-warning" role="alert">Enviaremos um email para o endereço informado com instruções
+                para recuperação da sua conta</div>
+            <div class="mb-3 form-group>">
+                <label for="emailRecuperacao" class="form-label">Endereço de email</label>
+                <input formControlName="emailRecuperacao" class="form-control" type="email"
+                    placeholder="Digite o endereço de email">
+                <!-- <div class="invalid-tooltip" *ngIf="emailRecuperao.invalid">
+                <span *ngIf="emailRecuperao.errors['required']">O email é obrigatório!</span>
+                <span *ngIf="emailRecuperao.errors['email']">O email precisa estar no formato válido!</span>
+            </div> -->
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-outline-primary col-mt-3"
+                (click)="modal.dismiss('fechar')">Cancelar</button>
+            <button type="submit" class="btn btn-outline-primary col-mt-3">Salvar</button>
+        </div>
+    </form>
+</ng-template>

@@ -1,0 +1,68 @@
+<div class="container">
+    <div class="row">
+        <div class="col-12 col-md-10 col-lg-9 mx-auto">
+            <div class="text-center text-md-start">
+                <h1 class="fw-bold text-primary">Equipamentos</h1>
+                <div>
+                    <div class="d-grid d-md-block gap-2">
+                        <button (click)="gravar(modal)" type="button" class="btn btn-primary me-md-1 col-md-2"><i class="pi pi-tag me-2"> Novo</i></button>
+                        <a role="button" class="btn btn-outline-primary col-md-2" routerLink="/painel"><i class="pi pi-sign-out me-2">Voltar</i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-3">
+                <table class="table table-light table-striped table-hover">
+                    <thead class="thead-dark text-center">
+                        <tr>
+                            <th>Número de série</th>
+                            <th>Nome</th>
+                            <th>Preço de aquisição</th>
+                            <th>Data de fabricação</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-center">
+                        <tr *ngFor="let equipamento of (equipamentos$) | async">
+                            <td>{{equipamento.numeroSerie}}</td>
+                            <td>{{equipamento.nome}}</td>
+                            <td>{{equipamento.preco | currency:'BRL' :true:'1.2-2'}}</td>
+                            <td>{{equipamento.data | date: 'dd/MM/yyyy'}}</td>
+                            <td class="d-grid d-md-block">
+                                <button (click)="gravar(modal, equipamento)" type="button" class="btn btn-primary me-0 me-md-1 mb-1 mb-md-auto"><i class="pi pi-pencil"></i></button>
+                                <button (click)="remover(equipamento)" type="button" class="btn btn-outline-danger"><i class="pi pi-trash"></i></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<ng-template #modal let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">{{tituloModal}} de equipamentos</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('fechar')"></button>
+    </div>
+    <form [formGroup]="form" (ngSubmit)="modal.close('gravar')">
+        <div class="modal-body">
+            <div class="mb-3 form-group>">
+                <label for="numeroSerie" class="form-label">Número de série</label>
+                <input formControlName="numeroSerie" class="form-control" type="text"
+                    placeholder="Digite o número de série do equipamento">
+                <label for="nome" class="form-label">Nome</label>
+                <input formControlName="nome" class="form-control" type="text"
+                    placeholder="Digite o nome do equipamento">
+                <label for="preco" class="form-label">Preço</label>
+                <input currencyMask [options]="{ prefix: 'R$', thousands: '.', decimal: ',', align: 'left' }" formControlName="preco" class="form-control" type="text"
+                    placeholder="R$ 0,00">
+                <label for="data" class="form-label">Data de aquisição</label>
+                <input formControlName="data" class="form-control" type="date">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-outline-primary col-mt-3"
+                (click)="modal.dismiss('fechar')">Cancelar</button>
+            <button type="submit" class="btn btn-primary col-mt-3">Salvar</button>
+        </div>
+    </form>
+</ng-template>
