@@ -1,8 +1,7 @@
-import { CurrencyPipe } from '@angular/common';
-import { ValueConverter } from '@angular/compiler/src/render3/view/template';
 import { Component, OnInit, TemplateRef } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ToastrService } from 'ngx-toastr';
 import { Observable } from 'rxjs';
 import { Equipamento } from './models/equipamentos.model';
 import { EquipamentoService } from './services/equipamento.service';
@@ -16,16 +15,9 @@ export class EquipamentoComponent implements OnInit {
   public equipamentos$: Observable<Equipamento[]>
   public form: FormGroup;
 
-  constructor(private equipamentoService: EquipamentoService, private fb: FormBuilder, private modalService: NgbModal) {
+  constructor(private equipamentoService: EquipamentoService, private fb: FormBuilder, private modalService: NgbModal, private toastr: ToastrService) {
 
    }
-
-  //  formatCurrency_TaxableValue(event)
-  //   {
-  //     var uy = new Intl.NumberFormat('pt-BR',{style: 'currency', currency:'BRL'}).format(event.target.value);
-  //     this.tax = event.target.value;
-  //     this.taxableValue = uy;
-  //   }
 
    get nome(){
     return this.form.get('nome');
@@ -78,6 +70,11 @@ export class EquipamentoComponent implements OnInit {
         await this.equipamentoService.inserir(this.form.value);
 
       console.log(`O equipamento foi salvo com sucesso`);
+      this.toastr.success('Equipamento foi salvo', 'Equipamentos', {
+        timeOut: 1000,
+        progressBar: true,
+        progressAnimation: 'decreasing'
+      });
     } catch (error) {
       console.log(error)
     }
@@ -85,6 +82,11 @@ export class EquipamentoComponent implements OnInit {
 
   public remover(equipamento: Equipamento){
     this.equipamentoService.remover(equipamento);
+    this.toastr.success('Equipamento foi excluido', 'Equipamentos', {
+      timeOut: 1000,
+      progressBar: true,
+      progressAnimation: 'decreasing'
+    });
   }
 
   public obterData(): string{

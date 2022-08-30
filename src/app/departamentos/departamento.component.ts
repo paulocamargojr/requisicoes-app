@@ -2,6 +2,7 @@ import { Component, OnInit, TemplateRef } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { stringLength } from '@firebase/util';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ToastrService } from 'ngx-toastr';
 import { Observable } from 'rxjs';
 import { Departamento } from './models/departamentos.models';
 import { DepartamentoService } from './services/departamento.service';
@@ -16,7 +17,7 @@ export class DepartamentoComponent implements OnInit {
   public departamentos$: Observable<Departamento[]>
   public form: FormGroup;
 
-  constructor(private departamentoService: DepartamentoService, private fb: FormBuilder, private modalService: NgbModal) { }
+  constructor(private departamentoService: DepartamentoService, private fb: FormBuilder, private modalService: NgbModal, private toastr : ToastrService) { }
 
   get nome(){
     return this.form.get('nome');
@@ -59,6 +60,11 @@ export class DepartamentoComponent implements OnInit {
         await this.departamentoService.inserir(this.form.value);
 
       console.log(`O departamento foi salvo com sucesso`);
+      this.toastr.success('Departamento foi salvo', 'Departamentos', {
+        timeOut: 1000,
+        progressBar: true,
+        progressAnimation: 'decreasing'
+      });
     } catch (error) {
       console.log(error)
     }
@@ -66,5 +72,11 @@ export class DepartamentoComponent implements OnInit {
 
   public remover(departamento: Departamento){
     this.departamentoService.remover(departamento);
+
+    this.toastr.success('Departamento foi removido', 'Departamentos', {
+      timeOut: 1000,
+      progressBar: true,
+      progressAnimation: 'decreasing'
+    });
   }
 }
