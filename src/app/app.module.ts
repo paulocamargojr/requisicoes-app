@@ -14,10 +14,14 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { AuthenticationService } from './auth/services/authentication.service';
 import { PainelComponent } from './painel/painel.component';
 import { NavbarComponent } from './navbar/navbar.component';
-import { DepartamentoModule } from './departamentos/departamento.module';
-import { EquipamentoModule } from './equipamentos/equipamento.module';
 import { ToastrModule } from 'ngx-toastr';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
+import ptBr from '@angular/common/locales/pt';
+import { registerLocaleData } from '@angular/common';
+import {LOCALE_ID, DEFAULT_CURRENCY_CODE } from '@angular/core';
+
+registerLocaleData(ptBr);
 
 @NgModule({
   declarations: [
@@ -39,13 +43,12 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
       timeOut: 1000,
       progressBar: true,
       progressAnimation: 'decreasing'
-    }),
-
-    DepartamentoModule,
-    EquipamentoModule
-    
+    })
   ],
-  providers: [AuthenticationService],
+  providers: [AuthenticationService,
+     {provide: LOCALE_ID, useValue: 'pt'},
+      {provide: DEFAULT_CURRENCY_CODE, useValue: 'BRL'}
+    ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

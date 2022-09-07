@@ -18,15 +18,15 @@
                             <th>Nome</th>
                             <th>Preço de aquisição</th>
                             <th>Data de fabricação</th>
-                            <th></th>
+                            <th>Ações</th>
                         </tr>
                     </thead>
                     <tbody class="text-center">
                         <tr *ngFor="let equipamento of (equipamentos$) | async">
                             <td>{{equipamento.numeroSerie}}</td>
                             <td>{{equipamento.nome}}</td>
-                            <td>{{equipamento.preco | currency:'BRL' :true:'1.2-2'}}</td>
-                            <td>{{equipamento.data | date: 'dd/MM/yyyy'}}</td>
+                            <td>{{equipamento.preco | currency}}</td>
+                            <td>{{equipamento.data | date}}</td>
                             <td class="d-grid d-md-block">
                                 <button (click)="gravar(modal, equipamento)" type="button" class="btn btn-primary me-0 me-md-1 mb-1 mb-md-auto"><i class="pi pi-pencil"></i></button>
                                 <button (click)="remover(equipamento)" type="button" class="btn btn-outline-danger"><i class="pi pi-trash"></i></button>

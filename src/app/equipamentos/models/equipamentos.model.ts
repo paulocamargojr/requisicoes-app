@@ -3,5 +3,5 @@ export class Equipamento{
     numeroSerie: string;
     nome: string;
     preco: number;
-    data: Date;
+    data: any;
 }
