@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/compat/firestore';
-import { Observable, map } from 'rxjs';
+import { Observable, map, take } from 'rxjs';
 import { Departamento } from 'src/app/departamentos/models/departamentos.models';
 import { Requisicao } from '../model/requisicoes.model';
 import * as moment from 'moment';
+import { Funcionario } from 'src/app/funcionarios/models/funcionario.model';
 import { Equipamento } from 'src/app/equipamentos/models/equipamentos.model';
 
 @Injectable({
@@ -19,23 +20,26 @@ export class RequisicaoService {
   public selecionarTodos(): Observable<Requisicao[]>{
     return this.registros.valueChanges()
     .pipe(
-      map((requisicoes: Requisicao[])=>{
-        requisicoes.forEach(requisicao => {
+      map(requisicoes => {
+        requisicoes.forEach(req =>{
           this.firestore.collection<Departamento>('departamentos')
-          .doc(requisicao.departamentoId)
+          .doc(req.departamentoId)
           .valueChanges()
-          .subscribe(x => requisicao.departamento = x);
-        });
+          .subscribe(d => req.departamento = d)
+
+          this.firestore.collection<Funcionario>('funcionarios')
+          .doc(req.funcionarioId)
+          .valueChanges()
+          .subscribe(f => req.funcionario = f)
+
+          if(req.equipamentoId){
+            this.firestore.collection<Equipamento>('equipamentos')
+            .doc(req.equipamentoId)
+            .valueChanges()
+            .subscribe(e => req.equipamento = e)
+          }
+        })
         return requisicoes;
-      }),
-      map((requiscoes: Requisicao[])=>{
-        requiscoes.forEach(requisicao =>{
-          this.firestore.collection<Equipamento>('equipamentos')
-        .doc(requisicao.equipamentoId)
-        .valueChanges()
-        .subscribe(x => requisicao.equipamento = x);
-        });
-        return requiscoes;
       })
     );
   }
@@ -57,5 +61,14 @@ export class RequisicaoService {
 
   public remover(registro: Requisicao): Promise<void>{
     return this.registros.doc(registro.id).delete();
+  }
+
+  public selecionarRequisicoesFuncionario(id: string){
+    return this.selecionarTodos()
+    .pipe(
+      map(requisicoes => {
+        return requisicoes.filter(req => req.funcionarioId === id)
+      })
+    )
   }
 }

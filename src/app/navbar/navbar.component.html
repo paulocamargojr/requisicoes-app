@@ -5,8 +5,8 @@
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" [ngbCollapse]="!estaColapsada">
-        <div class="link fw-semibold" *ngIf="usuarioLogado | async">
-            <ul class="navbar-nav">
+        <div class="links fw-semibold w-100 text-center" *ngIf="usuarioLogado | async">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
                   <a class="nav-link active text-primary" aria-current="page" routerLink="/departamentos">Departamentos</a>
                 </li>
