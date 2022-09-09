@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef } from '@angular/core';
 import { FormGroup, FormBuilder, AbstractControl, FormControl, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
@@ -45,16 +45,20 @@ export class RequisicoesDepartamentoComponent implements OnInit, OnDestroy {
     return this.form.get('descricao');
   }
 
+  get status(): AbstractControl | null {
+    return this.form.get('status');
+  }
+
   get departamentoId(): AbstractControl | null{
     return this.form.get('departamentoId')
   }
 
-  get data(): AbstractControl | null{
-    return this.form.get('data')
+  get movimentacoes(): AbstractControl | null {
+    return this.form.get('movimentacoes');
   }
 
-  get equipamentoId(): AbstractControl | null{
-    return this.form.get('equipamentoId')
+  get data(): AbstractControl | null{
+    return this.form.get('data')
   }
 
   get funcionarioId(): AbstractControl | null{
@@ -82,18 +86,25 @@ export class RequisicoesDepartamentoComponent implements OnInit, OnDestroy {
         data: new FormControl(''),
         departamentoId: new FormControl('', [Validators.required]),
         departamento: new FormControl(''),
-        equipamentoId: new FormControl(''),
-        equipamento: new FormControl(''),
         funcionarioId: new FormControl('') ,
-        funcionario: new FormControl('')
+        funcionario: new FormControl(''),
+        movimentacoes: new FormControl(''),
+        status: new FormControl('')
    });
 
-   this.equipamentos$ = this.equipamentoService.selecionarTodos();
    this.departamentos$ = this.depatamentoService.selecionarTodos();
   }
 
   ngOnDestroy(): void {
     this.processoAutenticado$.unsubscribe();
+  }
+
+  public async gravar(modal: TemplateRef<any>, requisicao?: Requisicao){
+    return null;
+  }
+
+  public remover(requisicao: Requisicao){
+
   }
 
 }

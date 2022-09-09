@@ -5,6 +5,8 @@
                 <h1 class="fw-bold text-primary">Requisições para meu Departamento</h1>
                 <div>
                     <div class="d-grid d-md-block gap-2">
+                        <button (click)="gravar(modal)" type="button" class="btn btn-primary me-md-1 col-md-2"><i
+                            class="pi pi-tag me-2"> Novo</i></button>
                         <a role="button" class="btn btn-outline-primary col-md-2" routerLink="/painel"><i
                                 class="pi pi-sign-out me-2">Voltar</i></a>
                     </div>
@@ -24,7 +26,18 @@
                         </tr>
                     </thead>
                     <tbody class="text-center">
-                        <tr>
+                        <tr *ngFor="let requisicao of (requisicoes$) | async">
+                            <td>{{requisicao.data}}</td>
+                            <td>{{requisicao}}</td>
+                            <td>{{requisicao.departamento?.nome}}</td>
+                            <td>{{requisicao.descricao}}</td>
+                            <td class="d-grid d-md-block">
+                                <button (click)="gravar(modal, requisicao)" type="button"
+                                    class="btn btn-primary me-0 me-md-1 mb-1 mb-md-auto"><i
+                                        class="pi pi-pencil"></i></button>
+                                <button (click)="remover(requisicao)" type="button" class="btn btn-outline-danger"><i
+                                        class="pi pi-trash"></i></button>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -52,12 +65,13 @@
                     </div>
                 </div>
                 <div class="mb-3 form-group position-relative">
-                    <label for="departamentoId" class="form-label">Departamento</label>
-                    <ng-select [clearable]="false" [searchable]="false" formControlName="departamentoId"
-                        [ngClass]="(departamentoId?.touched && departamentoId?.invalid) ? 'is-invalid' : ''">
-                        <ng-option *ngFor="let departamento of departamentos$ | async" [value]="departamento.id">
-                            {{departamento.nome}}
-                        </ng-option>
+                    <label for="status" class="form-label">Status</label>
+                    <ng-select [clearable]="false" [searchable]="false" formControlName="status"
+                        [ngClass]="(status?.touched && status?.invalid) ? 'is-invalid' : ''">
+                        <ng-option>Aberta</ng-option>
+                        <ng-option>Processando</ng-option>
+                        <ng-option>Não autorizada</ng-option>
+                        <ng-option>Finalizada</ng-option>
                     </ng-select>
                     <div *ngIf="departamentoId?.touched && departamentoId?.invalid" class="invalid-tooltip">
                         <span *ngIf="departamentoId?.errors?.['required']">O campo departamento não deve ficar
