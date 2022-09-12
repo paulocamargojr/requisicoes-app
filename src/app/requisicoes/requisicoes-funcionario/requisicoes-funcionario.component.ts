@@ -85,7 +85,11 @@ export class RequisicoesFuncionarioComponent implements OnInit, OnDestroy {
         equipamentoId: new FormControl(''),
         equipamento: new FormControl(''),
         funcionarioId: new FormControl('') ,
-        funcionario: new FormControl('')
+        funcionario: new FormControl(''),
+
+        status: new FormControl(''),
+        ultimaAtualizacao: new FormControl(''),
+        movimentacoes: new FormControl('')
    });
 
    this.equipamentos$ = this.equipamentoService.selecionarTodos();
@@ -99,9 +103,12 @@ export class RequisicoesFuncionarioComponent implements OnInit, OnDestroy {
   public async gravar(modal: TemplateRef<any>, requisicao?: Requisicao){
     this.form.reset();
      
-     this.data?.setValue(new Date());
+     this.form.get('data')?.setValue(new Date());
      this.form.get('equipamentoId')?.setValue(null);
      this.form.get('funcionarioId')?.setValue(this.funcionarioIdLogado);
+
+     this.form.get('ultimaAtualizacao')?.setValue(new Date());
+     this.form.get('status')?.setValue('Aberta');
 
      if(requisicao){
       const departamento = requisicao.departamento?requisicao.departamento: null;

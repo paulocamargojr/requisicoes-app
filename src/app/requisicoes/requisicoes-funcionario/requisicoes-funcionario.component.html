@@ -25,7 +25,7 @@
                     </thead>
                     <tbody class="text-center">
                         <tr *ngFor="let requisicao of (requisicoes$) | async">
-                            <td>{{requisicao.data}}</td>
+                            <td>{{requisicao.data.toDate() | date: 'dd/MM/yyyy HH:mm'}}</td>
                             <td>{{requisicao.departamento?.nome}}</td>
                             <td>{{requisicao.descricao}}</td>
                             <td>{{requisicao.equipamento?requisicao.equipamento.nome : 'Não selecionado'}}</td>

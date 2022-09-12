@@ -3,7 +3,6 @@ import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/comp
 import { Observable, map, take } from 'rxjs';
 import { Departamento } from 'src/app/departamentos/models/departamentos.models';
 import { Requisicao } from '../model/requisicoes.model';
-import * as moment from 'moment';
 import { Funcionario } from 'src/app/funcionarios/models/funcionario.model';
 import { Equipamento } from 'src/app/equipamentos/models/equipamentos.model';
 
@@ -50,8 +49,6 @@ export class RequisicaoService {
     
     const res = await this.registros.add(registro);
     registro.id = res.id;
-    moment.locale('pt-br');
-    registro.data = moment().calendar();
     this.registros.doc(res.id).set(registro);
   }
 
@@ -63,11 +60,30 @@ export class RequisicaoService {
     return this.registros.doc(registro.id).delete();
   }
 
+  public selecionarRequisicoesDepartamento(id: string){
+    return this.selecionarTodos()
+    .pipe(
+      map(requisicoes => {
+        return requisicoes.filter(req => req.departamentoId === id)
+      })
+    )
+  }
+
   public selecionarRequisicoesFuncionario(id: string){
     return this.selecionarTodos()
     .pipe(
       map(requisicoes => {
         return requisicoes.filter(req => req.funcionarioId === id)
+      })
+    )
+  }
+
+  public selecionarPorId(id: string): Observable<Requisicao>{
+    return this.selecionarTodos()
+    .pipe(
+      take(1),
+      map(requisicoes => {
+        return requisicoes.filter(req => req.id === id)[0];
       })
     )
   }

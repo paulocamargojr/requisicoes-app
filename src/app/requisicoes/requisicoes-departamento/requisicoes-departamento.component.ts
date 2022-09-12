@@ -8,7 +8,9 @@ import { Departamento } from 'src/app/departamentos/models/departamentos.models'
 import { DepartamentoService } from 'src/app/departamentos/services/departamento.service';
 import { Equipamento } from 'src/app/equipamentos/models/equipamentos.model';
 import { EquipamentoService } from 'src/app/equipamentos/services/equipamento.service';
+import { Funcionario } from 'src/app/funcionarios/models/funcionario.model';
 import { FuncionarioService } from 'src/app/funcionarios/services/funcionario.service';
+import { Movimentacao } from '../model/movimentacao.model';
 import { Requisicao } from '../model/requisicoes.model';
 import { RequisicaoService } from '../services/requisicao.service';
 
@@ -21,9 +23,11 @@ export class RequisicoesDepartamentoComponent implements OnInit, OnDestroy {
   public requisicoes$: Observable<Requisicao[]>;
   public departamentos$: Observable<Departamento[]>;
   public equipamentos$: Observable<Equipamento[]>;
-  public funcionarioIdLogado: string;
+  public funcionarioLogado: Funcionario;
   public form: FormGroup;
   public processoAutenticado$: Subscription;
+  public requisicaoSelecionada: Requisicao;
+  public listaStatus: string[] = ['Aberta', 'Processando', 'Não autorizada', 'Fechada'];
 
   constructor(private requisicaoService: RequisicaoService,
       private depatamentoService: DepartamentoService,
@@ -45,28 +49,24 @@ export class RequisicoesDepartamentoComponent implements OnInit, OnDestroy {
     return this.form.get('descricao');
   }
 
-  get status(): AbstractControl | null {
-    return this.form.get('status');
-  }
-
   get departamentoId(): AbstractControl | null{
     return this.form.get('departamentoId')
-  }
-
-  get movimentacoes(): AbstractControl | null {
-    return this.form.get('movimentacoes');
   }
 
   get data(): AbstractControl | null{
     return this.form.get('data')
   }
 
+  get equipamentoId(): AbstractControl | null{
+    return this.form.get('equipamentoId')
+  }
+
   get funcionarioId(): AbstractControl | null{
     return this.form.get('funcionarioId');
   }
 
-  get tituloModal(): string{
-    return this.id?.value ? "Atualização": "Cadastro";
+  get status(): AbstractControl | null{
+    return this.form.get('status');
   }
 
   ngOnInit(): void {
@@ -75,23 +75,19 @@ export class RequisicoesDepartamentoComponent implements OnInit, OnDestroy {
 
       this.processoAutenticado$ = this.funcionarioService.selecionarFuncionarioLogado(email)
       .subscribe(funcionario => {
-        this.funcionarioIdLogado = funcionario.id
-        this.requisicoes$ = this.requisicaoService.selecionarRequisicoesFuncionario(this.funcionarioIdLogado);
+        this.funcionarioLogado = funcionario
+        this.requisicoes$ = this.requisicaoService.selecionarRequisicoesDepartamento(funcionario.departamentoId);
       });
     })
 
    this.form = this.fb.group({
-        id: new FormControl(''),
-        descricao: new FormControl('', [Validators.required, Validators.minLength(3)]),
-        data: new FormControl(''),
-        departamentoId: new FormControl('', [Validators.required]),
-        departamento: new FormControl(''),
-        funcionarioId: new FormControl('') ,
+        status: new FormControl('', [Validators.required]),
+        descricao: new FormControl('', [Validators.required, Validators.minLength(6)]),
         funcionario: new FormControl(''),
-        movimentacoes: new FormControl(''),
-        status: new FormControl('')
+        data: new FormControl('')
    });
 
+   this.equipamentos$ = this.equipamentoService.selecionarTodos();
    this.departamentos$ = this.depatamentoService.selecionarTodos();
   }
 
@@ -99,12 +95,39 @@ export class RequisicoesDepartamentoComponent implements OnInit, OnDestroy {
     this.processoAutenticado$.unsubscribe();
   }
 
-  public async gravar(modal: TemplateRef<any>, requisicao?: Requisicao){
-    return null;
+  public async gravar(modal: TemplateRef<any>, requisicao: Requisicao){
+    this.requisicaoSelecionada = requisicao;
+    this.requisicaoSelecionada.movimentacoes = requisicao.movimentacoes? requisicao.movimentacoes: [];
+
+    this.form.reset();
+     
+     this.form.patchValue({
+      status: this.requisicaoSelecionada?.status,
+      funcionario: this.funcionarioLogado,
+      data: new Date()
+     });
+        
+     try {
+      await this.modalService.open(modal).result;
+
+      this.adicionarMovimentaco(this.form.value);
+
+      await this.requisicaoService.editar(this.requisicaoSelecionada);
+ 
+      console.log(`A requisição foi salva com sucesso`);
+      this.toastr.success('Requisição foi salva', 'Requisições', {
+        timeOut: 1000,
+        progressBar: true,
+        progressAnimation: 'decreasing'
+      });
+    } catch (error) {
+      console.log(error)
+    }
   }
 
-  public remover(requisicao: Requisicao){
-
+  private adicionarMovimentaco(movimentacao: Movimentacao) {
+    this.requisicaoSelecionada.movimentacoes.push(movimentacao);
+    this.requisicaoSelecionada.status = this.status?.value;
+    this.requisicaoSelecionada.ultimaAtualizacao = new Date();
   }
-
 }

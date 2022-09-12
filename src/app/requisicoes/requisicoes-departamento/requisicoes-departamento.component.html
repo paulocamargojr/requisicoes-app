@@ -5,8 +5,6 @@
                 <h1 class="fw-bold text-primary">Requisições para meu Departamento</h1>
                 <div>
                     <div class="d-grid d-md-block gap-2">
-                        <button (click)="gravar(modal)" type="button" class="btn btn-primary me-md-1 col-md-2"><i
-                            class="pi pi-tag me-2"> Novo</i></button>
                         <a role="button" class="btn btn-outline-primary col-md-2" routerLink="/painel"><i
                                 class="pi pi-sign-out me-2">Voltar</i></a>
                     </div>
@@ -27,16 +25,18 @@
                     </thead>
                     <tbody class="text-center">
                         <tr *ngFor="let requisicao of (requisicoes$) | async">
-                            <td>{{requisicao.data}}</td>
-                            <td>{{requisicao}}</td>
+                            <td>{{requisicao.data.toDate() | date: 'dd/MM/yyyy HH:mm'}}</td>
+                            <td>{{requisicao.ultimaAtualizacao.toDate() | date: 'dd/MM/yyyy HH:mm'}}</td>
                             <td>{{requisicao.departamento?.nome}}</td>
                             <td>{{requisicao.descricao}}</td>
+                            <!-- <td>{{requisicao.movimentacoes}}</td> -->
+                            <td>{{requisicao.status}}</td>
                             <td class="d-grid d-md-block">
                                 <button (click)="gravar(modal, requisicao)" type="button"
                                     class="btn btn-primary me-0 me-md-1 mb-1 mb-md-auto"><i
-                                        class="pi pi-pencil"></i></button>
-                                <button (click)="remover(requisicao)" type="button" class="btn btn-outline-danger"><i
-                                        class="pi pi-trash"></i></button>
+                                        class="pi pi-check-square"></i></button>
+                                <button [routerLink]="['/requisicoes', requisicao.id]" type="button" class="btn btn-outline-primary me-0 me-md-1 mb-1 mb-md-auto"><i
+                                        class="pi pi-info-circle"></i></button>
                             </td>
                         </tr>
                     </tbody>
@@ -47,36 +47,32 @@
 </div>
 <ng-template #modal let-modal>
     <div class="modal-header">
-        <h4 class="modal-title" id="modal-basic-title">{{tituloModal}} de requisições</h4>
+        <h4 class="modal-title" id="modal-basic-title">Movimentação de requisições</h4>
         <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('fechar')"></button>
     </div>
     <form [formGroup]="form" (ngSubmit)="modal.close('gravar')">
         <div class="modal-body">
             <div class="mb-3 form-group>">
                 <div class="mb-3 form-group position-relative">
-                    <label for="descricao" class="form-label">Descrição</label>
-                    <textarea formControlName="descricao" class="form-control" type="text"
-                        placeholder="Digite a descrição da requisição"
-                        [ngClass]="(descricao?.touched && descricao?.invalid) ? 'is-invalid' : ''"></textarea>
-                    <div *ngIf="descricao?.touched && descricao?.invalid" class="invalid-tooltip">
-                        <span *ngIf="descricao?.errors?.['required']">O campo descrição não deve ficar vázio!</span>
-                        <span *ngIf="descricao?.errors?.['minlength']">O campo descrição deve possuir mais de três
-                            letras!</span>
-                    </div>
+                    <label for="funcionario" class="form-label">Funcionário solicitante</label>
+                    <p class="text-primary fw-semibold">{{funcionarioLogado.nome}}</p>
+                </div>
+                <div class="form-group mb-3 position-relative">
+                    <label for="equipamentoId" class="form-label">Equipamentos</label>
+                    <p class="fw-semibold">{{requisicaoSelecionada.equipamento? requisicaoSelecionada.equipamento?.nome: 'Não informado'}}</p>
+                </div>
+                <div class="form-group mb-3 position-relative">
+                    <label for="nome" class="form-label">Descrição da solicitação</label>
+                    <p class="fw-semibold">{{requisicaoSelecionada.descricao}}</p>
                 </div>
                 <div class="mb-3 form-group position-relative">
                     <label for="status" class="form-label">Status</label>
-                    <ng-select [clearable]="false" [searchable]="false" formControlName="status"
-                        [ngClass]="(status?.touched && status?.invalid) ? 'is-invalid' : ''">
-                        <ng-option>Aberta</ng-option>
-                        <ng-option>Processando</ng-option>
-                        <ng-option>Não autorizada</ng-option>
-                        <ng-option>Finalizada</ng-option>
+                    <ng-select [clearable]="false" [searchable]="false" formControlName="status" placeholder="Status da requisição" [items]="listaStatus">
                     </ng-select>
-                    <div *ngIf="departamentoId?.touched && departamentoId?.invalid" class="invalid-tooltip">
-                        <span *ngIf="departamentoId?.errors?.['required']">O campo departamento não deve ficar
-                            vázio!</span>
-                    </div>
+                </div>
+                <div class="form-group mb-3 position-relative">
+                    <label for="nome" class="form-label">Descrição da Movimentação</label>
+                    <textarea formControlName="descricao" class="form-control" type="text" placeholder="Digite a descrição da atualização"></textarea>
                 </div>
             </div>
         </div>
