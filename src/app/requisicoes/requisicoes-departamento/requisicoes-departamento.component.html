@@ -19,7 +19,6 @@
                             <th>Departamento</th>
                             <th>descrição</th>
                             <th>Status</th>
-                            <th>Movimentações</th>
                             <th>Ações</th>
                         </tr>
                     </thead>
@@ -29,7 +28,6 @@
                             <td>{{requisicao.ultimaAtualizacao.toDate() | date: 'dd/MM/yyyy HH:mm'}}</td>
                             <td>{{requisicao.departamento?.nome}}</td>
                             <td>{{requisicao.descricao}}</td>
-                            <!-- <td>{{requisicao.movimentacoes}}</td> -->
                             <td>{{requisicao.status}}</td>
                             <td class="d-grid d-md-block">
                                 <button (click)="gravar(modal, requisicao)" type="button"
