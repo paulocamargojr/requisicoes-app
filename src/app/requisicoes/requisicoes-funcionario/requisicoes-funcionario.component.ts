@@ -8,6 +8,7 @@ import { Departamento } from 'src/app/departamentos/models/departamentos.models'
 import { DepartamentoService } from 'src/app/departamentos/services/departamento.service';
 import { Equipamento } from 'src/app/equipamentos/models/equipamentos.model';
 import { EquipamentoService } from 'src/app/equipamentos/services/equipamento.service';
+import { Funcionario } from 'src/app/funcionarios/models/funcionario.model';
 import { FuncionarioService } from 'src/app/funcionarios/services/funcionario.service';
 import { Requisicao } from '../model/requisicoes.model';
 import { RequisicaoService } from '../services/requisicao.service';
@@ -21,7 +22,7 @@ export class RequisicoesFuncionarioComponent implements OnInit, OnDestroy {
   public requisicoes$: Observable<Requisicao[]>;
   public departamentos$: Observable<Departamento[]>;
   public equipamentos$: Observable<Equipamento[]>;
-  public funcionarioIdLogado: string;
+  public funcionarioLogado: Funcionario;
   public form: FormGroup;
   public processoAutenticado$: Subscription;
 
@@ -71,8 +72,7 @@ export class RequisicoesFuncionarioComponent implements OnInit, OnDestroy {
 
       this.processoAutenticado$ = this.funcionarioService.selecionarFuncionarioLogado(email)
       .subscribe(funcionario => {
-        this.funcionarioIdLogado = funcionario.id
-        this.requisicoes$ = this.requisicaoService.selecionarRequisicoesFuncionario(this.funcionarioIdLogado);
+        this.funcionarioLogado = funcionario;
       });
     })
 
@@ -94,6 +94,7 @@ export class RequisicoesFuncionarioComponent implements OnInit, OnDestroy {
 
    this.equipamentos$ = this.equipamentoService.selecionarTodos();
    this.departamentos$ = this.depatamentoService.selecionarTodos();
+   this.requisicoes$ = this.requisicaoService.selecionarTodos();
   }
 
   ngOnDestroy(): void {
@@ -105,7 +106,7 @@ export class RequisicoesFuncionarioComponent implements OnInit, OnDestroy {
      
      this.form.get('data')?.setValue(new Date());
      this.form.get('equipamentoId')?.setValue(null);
-     this.form.get('funcionarioId')?.setValue(this.funcionarioIdLogado);
+     this.form.get('funcionarioId')?.setValue(this.funcionarioLogado.id);
 
      this.form.get('ultimaAtualizacao')?.setValue(new Date());
      this.form.get('status')?.setValue('Aberta');

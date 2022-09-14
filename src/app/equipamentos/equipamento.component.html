@@ -5,8 +5,10 @@
                 <h1 class="fw-bold text-primary">Equipamentos</h1>
                 <div>
                     <div class="d-grid d-md-block gap-2">
-                        <button (click)="gravar(modal)" type="button" class="btn btn-primary me-md-1 col-md-2"><i class="pi pi-tag me-2"> Novo</i></button>
-                        <a role="button" class="btn btn-outline-primary col-md-2" routerLink="/painel"><i class="pi pi-sign-out me-2">Voltar</i></a>
+                        <button (click)="gravar(modal)" type="button" class="btn btn-primary me-md-1 col-md-2"><i
+                                class="pi pi-tag me-2"> Novo</i></button>
+                        <a role="button" class="btn btn-outline-primary col-md-2" routerLink="/painel"><i
+                                class="pi pi-sign-out me-2">Voltar</i></a>
                     </div>
                 </div>
             </div>
@@ -28,8 +30,11 @@
                             <td>{{equipamento.preco | currency}}</td>
                             <td>{{equipamento.data | date}}</td>
                             <td class="d-grid d-md-block">
-                                <button (click)="gravar(modal, equipamento)" type="button" class="btn btn-primary me-0 me-md-1 mb-1 mb-md-auto"><i class="pi pi-pencil"></i></button>
-                                <button (click)="remover(equipamento)" type="button" class="btn btn-outline-danger"><i class="pi pi-trash"></i></button>
+                                <button (click)="gravar(modal, equipamento)" type="button"
+                                    class="btn btn-primary me-0 me-md-1 mb-1 mb-md-auto"><i
+                                        class="pi pi-pencil"></i></button>
+                                <button (click)="remover(equipamento)" type="button" class="btn btn-outline-danger"><i
+                                        class="pi pi-trash"></i></button>
                             </td>
                         </tr>
                     </tbody>
@@ -53,10 +58,17 @@
                 <input formControlName="nome" class="form-control" type="text"
                     placeholder="Digite o nome do equipamento">
                 <label for="preco" class="form-label">Preço</label>
-                <input currencyMask [options]="{ prefix: 'R$', thousands: '.', decimal: ',', align: 'left' }" formControlName="preco" class="form-control" type="text"
-                    placeholder="R$ 0,00">
-                <label for="data" class="form-label">Data de aquisição</label>
-                <input formControlName="data" class="form-control" type="date">
+                <input currencyMask [options]="{ prefix: 'R$', thousands: '.', decimal: ',', align: 'left' }"
+                    formControlName="preco" class="form-control" type="text" placeholder="R$ 0,00">
+                <div class="form-group mb-3 position-relative">
+                    <label for="data" class="form-label">Data de aquisição</label>
+                    <input formControlName="data" class="form-control" type="date"
+                        [ngClass]="(data?.touched && data?.invalid)? 'is-invalid': ''">
+                    <div class="invalid-tooltip" *ngIf="data?.touched && data?.invalid">
+                        <span *ngIf="data?.errors?.['required']">A data de fabricação precisa ser preenchida</span>
+                        <span *ngIf="data?.errors?.['datafutura']">A data de fabricação não pode exceder a data atual</span>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="modal-footer">
